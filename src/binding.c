@@ -549,6 +549,10 @@ void binding_exec(Binding_t *self) {
   pid_t pid;
   char *command = self->argument;
 
+  // Ungrab so that utils like xdotool and xvkbd behave correctly
+  // when launched from a binding using a modifier key
+  XUngrabKeyboard(xc->display, CurrentTime);
+
   if (!(pid = fork())) {
     setsid();
     switch (fork())
