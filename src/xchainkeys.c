@@ -530,6 +530,17 @@ void xc_grab_prefix_keys(XChainKeys_t *self) {
   }
 }
 
+
+void ungrab_keys(XChainKeys_t *self){
+  Binding_t *prefix;
+  int i;
+  for(i=0; i<self->root->num_children; i++) {
+    prefix = self->root->children[i];
+    key_ungrab(prefix->key);
+  }
+}
+
+
 void xc_mainloop(XChainKeys_t *self) {
   Binding_t *binding;
   Binding_t *reentry;
@@ -567,6 +578,10 @@ void xc_mainloop(XChainKeys_t *self) {
 
 	    popup_hide(xc->popup);
 	    xc->popup->timeout = 0;
+
+	    if (binding->action == XC_ACTION_WAIT) {
+	      ungrab_keys(self);
+	    }
 	    
 	    binding_activate(binding);
 	    break;
@@ -587,6 +602,8 @@ void xc_mainloop(XChainKeys_t *self) {
     }
   }
 }
+
+
 
 void xc_reset(XChainKeys_t *self) {
   int i;
